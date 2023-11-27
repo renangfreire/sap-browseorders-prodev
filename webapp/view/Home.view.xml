@@ -2,7 +2,29 @@
     xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
     xmlns="sap.m">
     <Page id="page" title="{i18n>title}">
-        
-        <content />
+        <List 
+            id="OrdersTable"
+            headerText="Orders"
+            items="{/Orders}"
+        >
+        <ObjectListItem
+			title="Order {OrderID}"
+            number="{
+                        path: 'OrderDate',
+                        formatter: '.formatter.formatDate'
+                    }"
+			type="Active">
+			<firstStatus>
+				<ObjectStatus
+					text="Offline"
+					/>
+			</firstStatus>
+            <ObjectAttribute text="Comp {/Customer/CompanyName}" />
+			<ObjectAttribute text="Shipped: {
+                path: 'ShippedDate',
+                formatter: '.formatter.formatDateLong'
+            }" />
+		</ObjectListItem>
+        </List>
     </Page>
 </mvc:View>

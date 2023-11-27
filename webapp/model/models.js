@@ -39,8 +39,11 @@ sap.ui.define([
                 return new Promise(function(resolve, reject) {
                         oDataModel.then(function(oModel){
                             oModel.read("/Orders", {
+                                urlParameters: {
+                                    $expand: "Customer"
+                                },
                                 success: (oData) => {
-                                    resolve(oData)
+                                    resolve(oData.results)
                                 },
                                 error: (oError) => {
                                     reject(oError)
@@ -56,11 +59,11 @@ sap.ui.define([
                 const oDataModel = this.getOModelData();
 
                 return new Promise(function(resolve, reject) {
-                    // Não consigo extender a request no Orders dessa forma, Perguntar ao joão!
+                    // CONSEGUI EXTENDER
                     oDataModel.then(function(oModel) {
                         oModel.read(`/Orders(10248)`, {
                             success: (oData) => {
-                                oData.expand
+                                
                                 resolve(oData)
                             },
                             error: (oError) => {
