@@ -1,7 +1,7 @@
 <mvc:View controllerName="com.lab2dev.browseordersprodev.controller.Home"
     xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
     xmlns="sap.m">
-    <Page id="page" title="{i18n>title}">
+    <Page id="page">
         <List 
             id="OrdersTable"
             headerText="Orders"
@@ -13,13 +13,21 @@
                         path: 'OrderDate',
                         formatter: '.formatter.formatDate'
                     }"
-			type="Active">
+			type="Active"
+            press="onNavToOrderDetails">
 			<firstStatus>
 				<ObjectStatus
-					text="Offline"
+					text="{
+                        parts: [{path: 'OrderDate'}, {path: 'ShippedDate'}],
+                        formatter: '.formatter.shipStatusText'
+                    }"
+                    state="{
+                        parts: [{path: 'OrderDate'}, {path: 'ShippedDate'}],
+                        formatter: '.formatter.shipStatusState'
+                    }"
 					/>
 			</firstStatus>
-            <ObjectAttribute text="Comp {/Customer/CompanyName}" />
+            <ObjectAttribute text="{ShipName}" />
 			<ObjectAttribute text="Shipped: {
                 path: 'ShippedDate',
                 formatter: '.formatter.formatDateLong'

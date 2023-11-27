@@ -39,9 +39,6 @@ sap.ui.define([
                 return new Promise(function(resolve, reject) {
                         oDataModel.then(function(oModel){
                             oModel.read("/Orders", {
-                                urlParameters: {
-                                    $expand: "Customer"
-                                },
                                 success: (oData) => {
                                     resolve(oData.results)
                                 },
@@ -59,11 +56,12 @@ sap.ui.define([
                 const oDataModel = this.getOModelData();
 
                 return new Promise(function(resolve, reject) {
-                    // CONSEGUI EXTENDER
                     oDataModel.then(function(oModel) {
                         oModel.read(`/Orders(10248)`, {
+                            urlParameters: {
+                                $expand: "Customer/Order_Details",
+                            },
                             success: (oData) => {
-                                
                                 resolve(oData)
                             },
                             error: (oError) => {

@@ -13,18 +13,24 @@ sap.ui.define([
         return Controller.extend("com.lab2dev.browseordersprodev.controller.Home", {
             formatter: formatter,
             onInit: function () {
-               const orders = models.getAllOrders();
+                this.oRouter = this.getOwnerComponent().getRouter();
 
-               orders
-                    .then(function(aOrder) {
+                const orders = models.getAllOrders();
+
+                orders
+                    .then((aOrder) => {
                         const oModel = new JSONModel({
                             Orders: aOrder
                         }) 
                         this.getView().setModel(oModel)
                     })
                     .catch((sError) => {
-                        console.error("Error getOrder" + sError)
+                        console.log("Error getOrder" + sError)
                     })
+            },
+            onNavToOrderDetails: function(){
+                this.oRouter.navTo("OrderDetail")
             }
+
         });
     });
