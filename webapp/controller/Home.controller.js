@@ -20,7 +20,8 @@ sap.ui.define([
                 orders
                     .then((aOrder) => {
                         const oModel = new JSONModel({
-                            Orders: aOrder
+                            Orders: aOrder,
+                            count: this.countItems(aOrder)
                         }) 
                         this.getView().setModel(oModel)
                     })
@@ -34,6 +35,9 @@ sap.ui.define([
                 const orderID = this.getView().getModel().getData().Orders[sOrderPath].OrderID
 
                 this.oRouter.navTo("OrderDetail", {orderID})
+            },
+            _countItems(aOrders){
+                return aOrders.length
             }
 
         });

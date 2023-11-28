@@ -12,11 +12,9 @@
 
 					<f:navigationActions>
 						<Button
-								icon="sap-icon://full-screen"
-								type="Transparent" />
-						<Button
 								icon="sap-icon://decline"
 								type="Transparent" 
+								press="onNavBack"
                                 />
 					</f:navigationActions>
 				</f:DynamicPageTitle>
@@ -26,19 +24,49 @@
 				<f:DynamicPageHeader pinnable="true">
 					<l:HorizontalLayout allowWrapping="true">
 						<l:VerticalLayout class="sapUiMediumMarginEnd">
-							<ObjectAttribute title="Customer" text="Warehouse A"/>
-							<ObjectAttribute title="Ordered" text="23L"/>
-							<ObjectAttribute title="Shipped" text="34"/>
+							<ObjectAttribute title="Customer" text="{/ShipName}"/>
+							<ObjectAttribute 
+									title="Ordered" 
+									text="{
+										path: '/OrderDate',
+										formatter: '.formatter.formatDateLong'
+									}"/>
+							<ObjectAttribute 
+										title="Shipped" 
+										text="{
+										path: '/ShippedDate',
+										formatter: '.formatter.formatDateLong'
+									}"/>
 						</l:VerticalLayout>
 
 						<l:VerticalLayout class="sapUiMediumMarginEnd">
-							<ObjectAttribute title="Price" />
-							<ObjectStatus text="410.418,22" />
+							<Label text="Price" />
+							<ObjectNumber 
+								number="{
+									parts: [
+										{path: '/viewDetails/totalOrderAmount'},
+										{path: '/viewDetails/currencyCode'}
+									],
+									type: 'sap.ui.model.type.Currency',
+									formatOptions: {
+										showMeasure: false
+										}
+									}" 
+									unit="{/viewDetails/currencyCode}"
+								/>
 						</l:VerticalLayout>
 
 						<l:VerticalLayout>
 							<ObjectAttribute title="Order Status"/>
-							<ObjectStatus text="In time" state="Success" />
+							<ObjectStatus 
+									text="{
+										parts: [{path: '/OrderDate'}, {path: '/ShippedDate'}],
+										formatter: '.formatter.shipStatusText'
+									}" 
+									state="{
+										parts: [{path: '/OrderDate'}, {path: '/ShippedDate'}],
+										formatter: '.formatter.shipStatusState'
+									}" />
 						</l:VerticalLayout>
 					</l:HorizontalLayout>
 				</f:DynamicPageHeader>
@@ -48,12 +76,17 @@
                 <IconTabBar
                     id="idIconTabBarMulti"
                     headerBackgroundDesign="Transparent"
-                    selectedKey="{detailView>/selectedTab}"
+                    selectedKey="{/detailsView/selectedTab}"
+					select=".onListSelect"
                     >
                     <items>
-                        <IconTabFilter icon="sap-icon://shipping-status" key="shipInfo">
+                        <IconTabFilter
+						id="iconTabFilterShipping"
+						icon="sap-icon://shipping-status" 
+						key="shipInfo">
                         </IconTabFilter>
                         <IconTabFilter
+							id="iconTabFilterProcessor"
                             icon="sap-icon://employee"
                             key="processor">
                         </IconTabFilter>
@@ -70,12 +103,12 @@
 					   width="auto">
 					<headerToolbar>
 						<Toolbar>
-							<Title text="Products" level="H2"/>
+							<Title text="Line items ({/viewDetails/count})" level="H2"/>
 						</Toolbar>
 					</headerToolbar>
 					<columns>
 						<Column
-							width="25rem">
+							width="40%">
 							    <Text text="Product" />
 						</Column>
 						<Column
@@ -102,22 +135,21 @@
 										text="{Product/ProductID}"/>
 								<ObjectNumber
 										number="{
-                                            path:'UnitPrice'
-                                            
-					                }" />
+                                            path: 'UnitPrice',
+											formatter: '.formatter.formatPrice'
+					                		}"
+										unit="{/viewDetails/currencyCode}" />
 								<ObjectAttribute
 										text="{Quantity}" />
 								<ObjectNumber
 										number="{
 											parts:[
-                                                {path:'Price'},
-                                                {path:'CurrencyCode'}
-                                                
+                                                {path:'UnitPrice'},
+												{path: 'Quantity'}    
                                             ],
-											type: 'sap.ui.model.type.Currency',
-											formatOptions: {showMeasure: false}
+											formatter: '.formatter.sumTotalProduct'
 										}"
-										unit="{CurrencyCode}" />
+										unit="{/viewDetails/currencyCode}" />
 							</cells>
 						</ColumnListItem>
 					</items>

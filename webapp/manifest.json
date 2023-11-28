@@ -14,17 +14,6 @@
       "id": "@sap/generator-fiori:basic",
       "version": "1.11.4",
       "toolsId": "5c684e10-0ff9-460f-8a77-8ecfeda6ee67"
-    },
-    "dataSources": {
-      "mainService": {
-        "uri": "/northwind/northwind.svc/",
-        "type": "OData",
-        "settings": {
-          "annotations": [],
-          "localUri": "localService/metadata.xml",
-          "odataVersion": "2.0"
-        }
-      }
     }
   },
   "sap.ui": {
@@ -102,7 +91,7 @@
         },
         {
           "name": "OrderDetail",
-          "pattern": "order/{orderID}",
+          "pattern": "order/{orderID}/:?query:",
           "target": [
             "OrderDetail"
           ]
@@ -122,6 +111,18 @@
           "clearControlAggregation": false,
           "viewId": "OrderDetail",
           "viewName": "OrderDetail"
+        },
+        "shipping": {
+          "name": "ShippingInfo",
+          "parent": "OrderDetail",
+          "controlId": "iconTabFilterShipping",
+          "controlAggregation": "content"
+        },
+        "processor": {
+          "name": "processor",
+          "parent": "OrderDetail",
+          "controlId": "iconTabFilterProcessor",
+          "controlAggregation": "content"
         }
       }
     },

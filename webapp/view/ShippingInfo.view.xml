@@ -14,15 +14,15 @@
 			columnsL="1"
 			columnsM="1" >
 			<f:content>
-				<Label text="Detail Name}" />
+				<Label text="Detail Name:" />
 				<Text text="{ShipName}" />
-				<Label text="{i18n>detailShippingStreet}" />
+				<Label text="Street:" />
 				<Text text="{ShipAddress}" />
-				<Label text="{i18n>detailShippingZIPCodeCity}" />
+				<Label text="ZIP Code / City:" />
 				<Text text="{ShipPostalCode} {ShipCity}" />
-				<Label text="{i18n>detailShippingRegion}" />
+				<Label text="Region:" />
 				<Text text="{ShipRegion}" />
-				<Label text="{i18n>detailShippingCountry}" />
+				<Label text="Country:" />
 				<Text text="{ShipCountry}" />
 			</f:content>
 		</f:SimpleForm>
