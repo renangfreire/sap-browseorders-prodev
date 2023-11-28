@@ -21,15 +21,21 @@ sap.ui.define([
             },
             _onRouteMatched: function(oEvent){
                 const oArgs = oEvent.getParameter("arguments")
-
+                
                 const order = models.getOrderData(oArgs.orderID);
+                const bActualModelExists = this.getView().getModel()?.getData().OrderID == oArgs.orderID
 
+                if(!bActualModelExists){
+                    this.getView().setModel(new JSONModel({}))
+                    this.getView().setBusy(true)
+                }
+                // if()
+                
                 const oQuery = oArgs["?query"]
                 let selectedTab
-
-                debugger
-
-                if(oQuery.tab && this._aValidKeys.findIndex((el) => el === oQuery.tab) >= 0){
+                
+                if(oQuery.tab && this._aValidKeys.indexOf(oQuery.tab) >= 0){
+                    this.oRouter.getTargets().display(oQuery.tab)
                     selectedTab = oQuery.tab
                 } else{
                     this.oRouter.navTo("OrderDetail", {
@@ -37,7 +43,20 @@ sap.ui.define([
                         query: {
                             tab: "shipping"
                         }
+                    }, true)
+                }
+
+                if(bActualModelExists){
+                    const oActualModel = this.getView().getModel().getData()
+
+                    const oModel = new JSONModel({
+                        ...oActualModel,
+                        viewDetails: {
+                            selectedTab
+                        }
                     })
+
+                    return this.getView().setModel(oModel)
                 }
 
                 order
@@ -51,9 +70,10 @@ sap.ui.define([
                                 selectedTab
                             }
                         }) 
+                        this.getView().setBusy(false)
+
                         this.getView().setModel(oModel)
 
-                        this.oRouter().getTargets().display(oQuery.tab)
                     })
                     .catch((sError) => {
                         console.log("Error getOrder" + sError)
@@ -70,11 +90,18 @@ sap.ui.define([
                     return acc + productTotal
                 }, 0)
 
-                return totalAmount
+                return totalAmount.toFixed(2)
             },
             onListSelect: function(oEvent){
+                const orderID = this.getView().getModel().getData().OrderID
+                const sTabSelected = oEvent.getParameter("selectedKey")
 
-                
+                this.oRouter.navTo("OrderDetail", {
+                    orderID: orderID,
+                    query: {
+                        tab: sTabSelected
+                    }
+                }, true)      
             },
             onNavBack: function(){
                 this.oRouter.navTo("RouteHome")

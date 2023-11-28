@@ -14,16 +14,16 @@
 			columnsL="1"
 			columnsM="1" >
 			<f:content>
-				<Label text="Detail Name:" />
-				<Text text="{ShipName}" />
-				<Label text="Street:" />
-				<Text text="{ShipAddress}" />
-				<Label text="ZIP Code / City:" />
-				<Text text="{ShipPostalCode} {ShipCity}" />
-				<Label text="Region:" />
-				<Text text="{ShipRegion}" />
-				<Label text="Country:" />
-				<Text text="{ShipCountry}" />
+				<Label text="Detail Name" />
+				<Text text="{/ShipName}" />
+				<Label text="Street" />
+				<Text text="{/ShipAddress}" />
+				<Label text="ZIP Code / City" />
+				<Text text="{/ShipPostalCode} {/ShipCity}" />
+				<Label text="Region" />
+				<Text text="{/ShipRegion}" />
+				<Label text="Country" />
+				<Text text="{/ShipCountry}" />
 			</f:content>
 		</f:SimpleForm>
 	</VBox>

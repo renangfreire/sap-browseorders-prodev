@@ -33,7 +33,7 @@
     }
   },
   "sap.ui5": {
-    "flexEnabled": true,
+    "flexEnabled": false,
     "dependencies": {
       "minUI5Version": "1.120.1",
       "libs": {
@@ -110,19 +110,24 @@
           "transition": "slide",
           "clearControlAggregation": false,
           "viewId": "OrderDetail",
-          "viewName": "OrderDetail"
+          "viewName": "OrderDetail",
+          "viewLevel": 1
         },
         "shipping": {
-          "name": "ShippingInfo",
+          "viewType": "XML",
+          "viewName": "ShippingInfo",
           "parent": "OrderDetail",
           "controlId": "iconTabFilterShipping",
-          "controlAggregation": "content"
+          "controlAggregation": "content",
+          "viewLevel": 2
         },
         "processor": {
-          "name": "processor",
+          "viewType": "XML",
+          "viewName": "Processor",
           "parent": "OrderDetail",
           "controlId": "iconTabFilterProcessor",
-          "controlAggregation": "content"
+          "controlAggregation": "content",
+          "viewLevel": 2
         }
       }
     },

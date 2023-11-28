@@ -75,7 +75,19 @@ sap.ui.define([
                 const sumTotalProduct = +sPrice * nQuantity;
 
                 return oCurrency.formatValue([sumTotalProduct.toFixed(2)], "string")
+            },
+            handleBinaryContent: function(vData){
+
+                if(vData){
+                    const sMetaData1 = "data:image/jpeg;base64,"
+                    const sMetaData2 = vData.substring(104)
+
+                    return sMetaData1 + sMetaData2
+                } else{
+                    return "../images/Employee.png"
+                }
+
+                
             }
-            
     };
 });

@@ -76,14 +76,14 @@
                 <IconTabBar
                     id="idIconTabBarMulti"
                     headerBackgroundDesign="Transparent"
-                    selectedKey="{/detailsView/selectedTab}"
+                    selectedKey="{/viewDetails/selectedTab}"
 					select=".onListSelect"
                     >
                     <items>
                         <IconTabFilter
 						id="iconTabFilterShipping"
 						icon="sap-icon://shipping-status" 
-						key="shipInfo">
+						key="shipping">
                         </IconTabFilter>
                         <IconTabFilter
 							id="iconTabFilterProcessor"
