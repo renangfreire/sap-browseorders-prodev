@@ -4,7 +4,7 @@
     <Page id="page">
         <List 
             id="OrdersTable"
-            headerText="Orders"
+            headerText="Orders ({/count})"
             items="{/Orders}"
         >
         <ObjectListItem

@@ -2,8 +2,9 @@ sap.ui.define([
     "sap/ui/core/format/DateFormat",
     "sap/ui/core/date/UI5Date",
     "sap/ui/core/Locale",
+    "sap/ui/model/type/Currency"
 ], 
-    function (DateFormat, UI5Date, Locale) {
+    function (DateFormat, UI5Date, Locale, Currency) {
         "use strict";
 
         return {
@@ -61,6 +62,19 @@ sap.ui.define([
                     return "Warning"
                 }
                 return "Success"
+            },
+            formatPrice: function(sPrice){
+                if(!sPrice){
+                    return ""
+                }
+
+                return Number.parseFloat(sPrice).toFixed(2)
+            },
+            sumTotalProduct: function(sPrice, nQuantity){
+                const oCurrency = new Currency({showMensure: false})
+                const sumTotalProduct = +sPrice * nQuantity;
+
+                return oCurrency.formatValue([sumTotalProduct.toFixed(2)], "string")
             }
             
     };
