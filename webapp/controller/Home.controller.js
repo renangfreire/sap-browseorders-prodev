@@ -28,8 +28,12 @@ sap.ui.define([
                         console.log("Error getOrder" + sError)
                     })
             },
-            onNavToOrderDetails: function(){
-                this.oRouter.navTo("OrderDetail")
+            onNavToOrderDetails: function(oEvent){
+                // REFATORAR ESSE CODE COM O JOAO DEPOIS -- WARNING!
+                const sOrderPath = oEvent.getSource().getBindingContextPath().split(/[a-z-(-)-/]/gi).filter(el => el != "")
+                const orderID = this.getView().getModel().getData().Orders[sOrderPath].OrderID
+
+                this.oRouter.navTo("OrderDetail", {orderID})
             }
 
         });

@@ -1,6 +1,141 @@
-<mvc:View controllerName="com.lab2dev.browseordersprodev.controller.Home"
+<mvc:View controllerName="com.lab2dev.browseordersprodev.controller.OrderDetail"
     xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
-    xmlns="sap.m">
-    <Page id="orderDetail">
-    </Page>
+    xmlns="sap.m"
+    xmlns:f="sap.f"
+	xmlns:l="sap.ui.layout">
+    <f:DynamicPage id="dynamicPageId" headerExpanded="{/Order}" toggleHeaderOnTitleClick="{/titleClickable}">
+			<f:title>
+				<f:DynamicPageTitle>
+					<f:heading>
+						<Title text="Order {/OrderID}"/>
+					</f:heading>
+
+					<f:navigationActions>
+						<Button
+								icon="sap-icon://full-screen"
+								type="Transparent" />
+						<Button
+								icon="sap-icon://decline"
+								type="Transparent" 
+                                />
+					</f:navigationActions>
+				</f:DynamicPageTitle>
+			</f:title>
+			<!-- DynamicPage Header -->
+			<f:header>
+				<f:DynamicPageHeader pinnable="true">
+					<l:HorizontalLayout allowWrapping="true">
+						<l:VerticalLayout class="sapUiMediumMarginEnd">
+							<ObjectAttribute title="Customer" text="Warehouse A"/>
+							<ObjectAttribute title="Ordered" text="23L"/>
+							<ObjectAttribute title="Shipped" text="34"/>
+						</l:VerticalLayout>
+
+						<l:VerticalLayout class="sapUiMediumMarginEnd">
+							<ObjectAttribute title="Price" />
+							<ObjectStatus text="410.418,22" />
+						</l:VerticalLayout>
+
+						<l:VerticalLayout>
+							<ObjectAttribute title="Order Status"/>
+							<ObjectStatus text="In time" state="Success" />
+						</l:VerticalLayout>
+					</l:HorizontalLayout>
+				</f:DynamicPageHeader>
+			</f:header>
+			<f:content>
+            <l:VerticalLayout class="sapUiContentPadding">
+                <IconTabBar
+                    id="idIconTabBarMulti"
+                    headerBackgroundDesign="Transparent"
+                    selectedKey="{detailView>/selectedTab}"
+                    >
+                    <items>
+                        <IconTabFilter icon="sap-icon://shipping-status" key="shipInfo">
+                        </IconTabFilter>
+                        <IconTabFilter
+                            icon="sap-icon://employee"
+                            key="processor">
+                        </IconTabFilter>
+                    </items>
+                </IconTabBar>
+
+				<Table id="idProductsTable"
+						sticky="HeaderToolbar,ColumnHeaders"
+						inset="false"
+						items="{
+							path: '/Order_Details/results/'		
+						}"
+					   class="sapUiSmallMarginTop"
+					   width="auto">
+					<headerToolbar>
+						<Toolbar>
+							<Title text="Products" level="H2"/>
+						</Toolbar>
+					</headerToolbar>
+					<columns>
+						<Column
+							width="25rem">
+							    <Text text="Product" />
+						</Column>
+						<Column
+								minScreenWidth="Tablet"
+								demandPopin="true">
+							<Text text="Unit Price" />
+						</Column>
+						<Column
+								minScreenWidth="Tablet"
+								demandPopin="true"
+								hAlign="End">
+							<Text text="Quantity" />
+						</Column>
+						<Column
+								hAlign="End">
+							<Text text="Total" />
+						</Column>
+					</columns>
+					<items>
+						<ColumnListItem>
+							<cells>
+								<ObjectIdentifier
+										title="{Product/ProductName}"
+										text="{Product/ProductID}"/>
+								<ObjectNumber
+										number="{
+                                            path:'UnitPrice'
+                                            
+					                }" />
+								<ObjectAttribute
+										text="{Quantity}" />
+								<ObjectNumber
+										number="{
+											parts:[
+                                                {path:'Price'},
+                                                {path:'CurrencyCode'}
+                                                
+                                            ],
+											type: 'sap.ui.model.type.Currency',
+											formatOptions: {showMeasure: false}
+										}"
+										unit="{CurrencyCode}" />
+							</cells>
+						</ColumnListItem>
+					</items>
+				</Table>
+                </l:VerticalLayout>
+			</f:content>
+			<!-- DynamicPage Footer -->
+			<f:footer>
+				<OverflowToolbar>
+					<Button icon="sap-icon://message-popup"
+							text="{/messagesLength}"
+							type="Emphasized"
+							press="onMessageButtonPress"
+							visible="{= !!${/messagesLength}}"/>
+					<ToolbarSpacer/>
+					<Button type="Accept" text="Accept"/>
+					<Button type="Reject" text="Reject"/>
+				</OverflowToolbar>
+			</f:footer>
+		</f:DynamicPage>
 </mvc:View>
