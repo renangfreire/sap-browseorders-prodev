@@ -7,6 +7,30 @@
             headerText="Orders ({/count})"
             items="{/Orders}"
         >
+        <headerToolbar>
+			<OverflowToolbar>
+				<SearchField liveChange=".onSearch" width="100%" showRefreshButton="true">
+                    <layoutData>
+                        <OverflowToolbarLayoutData
+                            minWidth="150px"
+                            maxWidth="240px"
+                            shrinkable="true"
+                            priority="NeverOverflow"/>			
+                    </layoutData>
+                </SearchField>
+                <ToolbarSpacer/>
+                <Button
+					id="filterButton"
+					press=".onOpenViewSettings"
+					icon="sap-icon://filter"
+					type="Transparent"/>
+				<Button
+					id="groupButton"
+					press=".onOpenViewSettings"
+					icon="sap-icon://group-2"
+					type="Transparent"/>
+			</OverflowToolbar>
+		</headerToolbar>
         <ObjectListItem
 			title="Order {OrderID}"
             number="{

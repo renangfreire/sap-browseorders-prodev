@@ -29,7 +29,6 @@ sap.ui.define([
                     this.getView().setModel(new JSONModel({}))
                     this.getView().setBusy(true)
                 }
-                // if()
                 
                 const oQuery = oArgs["?query"]
                 let selectedTab
