@@ -33,7 +33,7 @@ sap.ui.define([
                 const oQuery = oArgs["?query"]
                 let selectedTab
                 
-                if(oQuery.tab && this._aValidKeys.indexOf(oQuery.tab) >= 0){
+                if(oQuery?.tab && this._aValidKeys.indexOf(oQuery?.tab) >= 0){
                     this.oRouter.getTargets().display(oQuery.tab)
                     selectedTab = oQuery.tab
                 } else{
@@ -48,14 +48,12 @@ sap.ui.define([
                 if(bActualModelExists){
                     const oActualModel = this.getView().getModel().getData()
 
-                    const oModel = new JSONModel({
+                    return this.getView().setData({
                         ...oActualModel,
                         viewDetails: {
                             selectedTab
                         }
                     })
-
-                    return this.getView().setModel(oModel)
                 }
 
                 order
@@ -70,7 +68,7 @@ sap.ui.define([
                             }
                         }) 
                         this.getView().setBusy(false)
-
+                        
                         this.getView().setModel(oModel)
 
                     })
@@ -83,8 +81,8 @@ sap.ui.define([
                 return oOrderDetails.results.length
             },
             _sumTotalOrder: function(oOrderDetails){
-                const totalAmount = oOrderDetails.results.reduce((acc, atualValue) => {
-                    const productTotal = atualValue.Quantity * +atualValue.UnitPrice
+                const totalAmount = oOrderDetails.results.reduce((acc, actualValue) => {
+                    const productTotal = actualValue.Quantity * +actualValue.UnitPrice
 
                     return acc + productTotal
                 }, 0)

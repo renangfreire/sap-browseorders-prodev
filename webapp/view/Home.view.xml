@@ -1,10 +1,9 @@
 <mvc:View controllerName="com.lab2dev.browseordersprodev.controller.Home"
     xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
     xmlns="sap.m">
-    <Page id="page">
+    <Page id="page" title="Orders ({/count})">
         <List 
             id="OrdersTable"
-            headerText="Orders ({/count})"
             items="{/Orders}"
         >
         <headerToolbar>
@@ -21,12 +20,12 @@
                 <ToolbarSpacer/>
                 <Button
 					id="filterButton"
-					press=".onOpenViewSettings"
+					press=".handleOpenDialog"
 					icon="sap-icon://filter"
 					type="Transparent"/>
 				<Button
 					id="groupButton"
-					press=".onOpenViewSettings"
+					press=".handleOpenDialog"
 					icon="sap-icon://group-2"
 					type="Transparent"/>
 			</OverflowToolbar>

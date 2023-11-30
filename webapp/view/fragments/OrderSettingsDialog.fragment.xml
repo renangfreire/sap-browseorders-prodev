@@ -1,0 +1,39 @@
+<core:FragmentDefinition
+		xmlns="sap.m"
+		xmlns:core="sap.ui.core">
+	<ViewSettingsDialog id="settingsDialog"
+			confirm="handleConfirm"
+			>
+		<sortItems>
+			<ViewSettingsItem text="Order Date" key="1" selected="true"/>
+			<ViewSettingsItem text="Ship Date" key="2" />
+			<ViewSettingsItem text="Status Order" key="3" />
+		</sortItems>
+		<groupItems>
+			<ViewSettingsItem text="Month" key="1" />
+			<ViewSettingsItem text="Field 2" key="2" />
+			<ViewSettingsItem text="Field 3" key="3" />
+		</groupItems>
+		<filterItems>
+			<ViewSettingsFilterItem text="Order Status" key="1">
+				<items>
+					<ViewSettingsItem text="Too Long" key="1a" />
+					<ViewSettingsItem text="Urgent" key="1b" />
+					<ViewSettingsItem text="In time" key="1c" />
+				</items>
+			</ViewSettingsFilterItem>
+			<ViewSettingsFilterItem text="Customer" items="{/viewDetails/allCustomers}" key="2">
+				<items>
+					<ViewSettingsItem text="{CustomerName}" key="{CustomerID}" />
+				</items>
+			</ViewSettingsFilterItem>
+			<ViewSettingsFilterItem text="Field3" key="3">
+				<items>
+					<ViewSettingsItem text="Value A" key="3a" />
+					<ViewSettingsItem text="Value B" key="3b" />
+					<ViewSettingsItem text="Value C" key="3c" />
+				</items>
+			</ViewSettingsFilterItem>
+		</filterItems>
+	</ViewSettingsDialog>
+</core:FragmentDefinition>
