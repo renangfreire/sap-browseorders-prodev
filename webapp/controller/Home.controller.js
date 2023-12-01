@@ -20,10 +20,10 @@ sap.ui.define([
             onInit: function () {
                 this.getView().setBusy(true)
                 
-                this._GroupPaths = {
-                    OrderMonth: "/OrderDate",
-                    ShippedDate: "/ShippedDate",
-                    StatusOrder: ''
+                this._oSorterPaths = {
+                    OrderMonth: "OrderDate",
+                    ShippedDate: "ShippedDate",
+                    CustomerGroup: "ShipName"
                 }
 
                 this.oRouter = this.getOwnerComponent().getRouter();
@@ -75,7 +75,7 @@ sap.ui.define([
 
                 getModel.setData({...oData, count: oBinding.getCount()})
               },
-            handleOpenDialog: function() {
+            handleOpenDialog: function(oEvent) {
                 const oView = this.getView();
                 if(!this._pDialog){
                     this._pDialog = Fragment.load({
@@ -83,15 +83,22 @@ sap.ui.define([
                         controller: this
                     })
                 }
+
+                const sId = oEvent.getParameter("id")
+                let sPage
+                if(sId.includes("sort")){
+                    sPage = "sort"
+                } 
+                if(sId.includes("filter")){
+                    sPage = "filter"
+                }
+                if(sId.includes("group")){
+                    sPage = 'group'
+                }
+
                 this._pDialog.then((oDialog) => {
                     oView.insertDependent(oDialog) // Passando MODEL pro FRAGMENT
-                    oDialog.open();
-                });
-            },
-            _getGroupHeader: function (oGroup){
-                return new GroupHeaderListItem({
-                    title: oGroup.key,
-                    upperCase: false
+                    oDialog.open(sPage);
                 });
             },
             _countItems(aOrders){
@@ -105,9 +112,15 @@ sap.ui.define([
             },
             handleConfirm: function(oEvent){
                 const oParams = oEvent.getParameters();
+
+                const oList = this.byId("OrdersTable")
+                this._oBinding = oList.getBinding("items")
+
                 this._filterOrders(oParams.filterCompoundKeys)
-                this._sortOrders(oParams.sortItem.getProperty("key"), oParams.sortDescending)
-                this._groupOrders(oParams.groupItem.getProperty("key"), oParams.groupDescending)
+                this._sortOrders(oParams.sortItem?.getProperty("key"), 
+                                 oParams.sortDescending, 
+                                 oParams.groupItem?.getProperty("key"), 
+                                 oParams.groupDescending)
             },
             _filterOrders: function(sQuery){
                 const getModel = this.getView().getModel()
@@ -142,13 +155,13 @@ sap.ui.define([
 
                 getModel.setData({...oData, count: oBinding.getCount()})
             },
-            _sortOrders: function(sQuery, sortDescending){
+            _sortOrders: function(sQuery, sortDescending, groupQuery, groupDescending){
                 let oSorter
-                if(sQuery === "StatusOrder"){
+                if(sQuery === "StatusOrder" || groupQuery === "StatusOrder"){
                      oSorter = new Sorter({
                         path: "",
-                        descending: sortDescending,
-                        group: false
+                        descending: groupDescending || sortDescending, 
+                        group: groupQuery ?  this?._oGroupFunctions[groupQuery] : false,
                     })
 
                     oSorter.fnCompare = function(beforeValue, actualValue){
@@ -161,30 +174,18 @@ sap.ui.define([
                     }
                 } else {
                     oSorter = new Sorter({
-                        path: sQuery,
-                        descending: sortDescending,
-                        group: false
+                        path: groupQuery ? this._oSorterPaths[groupQuery] : sQuery,
+                        descending: groupDescending || sortDescending,
+                        group: groupQuery ?  this?._oGroupFunctions[groupQuery] : false
                     })
                 }
-                
-                const oList = this.byId("OrdersTable")
-                const oBinding = oList.getBinding("items")
-                
-                oBinding.sort(oSorter, "Application")
-            },
-            _groupOrders: function(sQuery, groupDescending){
-                // Alerta de Gambiarra abaixo com o BIND
-                const oSorter = new Sorter("/OrderDate", groupDescending, this._oGroupFunctions["OrderMonth"])
 
-                const oList = this.byId("OrdersTable")
-                const oBinding = oList.getBinding("items")
-                
-                oBinding.sort(oSorter, "Application")
-              
+                this._oBinding.sort(oSorter, "Application")
             },
             _oGroupFunctions: {
                 CustomerGroup: function(oContext){
                     const CustomerName = oContext.getProperty("ShipName")
+                    debugger
 
                     return {
                         key: CustomerName,
@@ -224,28 +225,29 @@ sap.ui.define([
                 StatusOrder: function(oContext){
                     const sOrderDate = oContext.getProperty("OrderDate")
                     const sShippedDate = oContext.getProperty("ShippedDate")
-
+                    
                     const nDaysInTransport = formatter.calcDaysInTransport(sOrderDate, sShippedDate)
-                    const key = this._oGroupFunctions._StatusOrderState(nDaysInTransport)
+                    // Refatorar o code abaixo dps
+                    let key, name
 
-                    console.log(key)
-
+                    if(nDaysInTransport > 14){
+                        name = "Error"
+                        key = "Too long"
+                     }
+                    else if(nDaysInTransport > 7){
+                        name = "Warning"
+                        key = "Urgent"
+                    } else{
+                        name =  "Success"
+                        key = "In time"
+                    }
+                    
                     return {
-                        key: key,
-                        name:  key
+                        key,
+                        name
                     }
                     
                 },
-                // Por algum motivo qnd eu chamava o state no formatter quebrava, então coloquei a logica aqui... Perguntar pro João dps
-                _StatusOrderState: function(nDaysInTransport){
-                    if(nDaysInTransport > 14){
-                        return "Error"
-                    }
-                    if(nDaysInTransport > 7){
-                        return "Warning"
-                    }
-                    return "Success"
-                }
             },
             _getGroupHeader: function(oGroup) {
                 return new GroupHeaderListItem({

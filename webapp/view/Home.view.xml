@@ -19,6 +19,11 @@
                 </SearchField>
                 <ToolbarSpacer/>
                 <Button
+					id="sortButton"
+					press=".handleOpenDialog"
+					icon="sap-icon://sort"
+					type="Transparent"/>
+                <Button
 					id="filterButton"
 					press=".handleOpenDialog"
 					icon="sap-icon://filter"
