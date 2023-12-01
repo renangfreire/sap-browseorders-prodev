@@ -26,15 +26,7 @@ sap.ui.define([
             },
             shipStatusText:  function(oOrderDate, oShippedDate){
                 // Adicionar a condição para os dias no i18n e adicionar o texto de retorno no i18n
-
-                    if(oShippedDate === "null"){
-                        return "None"
-                    }
-
-                    oShippedDate = new Date(oShippedDate)
-                    oOrderDate = new Date(oOrderDate)
-    
-                    const nDaysInTransport = new Date(oShippedDate.getTime() - oOrderDate.getTime()).getDate()
+                   const nDaysInTransport = this.formatter.calcDaysInTransport(oOrderDate, oShippedDate);
     
                     if(nDaysInTransport > 14){
                         return "Too late"
@@ -46,7 +38,7 @@ sap.ui.define([
                 
             },
             shipStatusState: function(oOrderDate, oShippedDate){
-                if(typeof oShippedDate === "null"){
+                if(oShippedDate === "null"){
                     return "None"
                 }
 
@@ -62,6 +54,18 @@ sap.ui.define([
                     return "Warning"
                 }
                 return "Success"
+            },
+            calcDaysInTransport: function(oOrderDate, oShippedDate){
+                if(oShippedDate === "null"){
+                    return "None"
+                }
+
+                oShippedDate = new Date(oShippedDate)
+                oOrderDate = new Date(oOrderDate)
+
+                const nDaysInTransport = new Date(oShippedDate.getTime() - oOrderDate.getTime()).getDate()
+
+                return nDaysInTransport
             },
             formatPrice: function(sPrice){
                 if(!sPrice){

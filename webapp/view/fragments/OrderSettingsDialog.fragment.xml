@@ -5,33 +5,28 @@
 			confirm="handleConfirm"
 			>
 		<sortItems>
-			<ViewSettingsItem text="Order Date" key="1" selected="true"/>
-			<ViewSettingsItem text="Ship Date" key="2" />
-			<ViewSettingsItem text="Status Order" key="3" />
+			<ViewSettingsItem text="Order ID" key="OrderID" selected="true" />
+			<ViewSettingsItem text="Order Date" key="OrderDate"/>
+			<ViewSettingsItem text="Ship Date" key="ShippedDate" />
+			<ViewSettingsItem text="Status Order" key="StatusOrder" />
 		</sortItems>
 		<groupItems>
-			<ViewSettingsItem text="Month" key="1" />
-			<ViewSettingsItem text="Field 2" key="2" />
-			<ViewSettingsItem text="Field 3" key="3" />
+			<ViewSettingsItem text="Customer" key="CustomerGroup" />
+			<ViewSettingsItem text="Order Month" key="OrderMonth" />
+			<ViewSettingsItem text="Shipped Month" key="ShippedMonth" />
+			<ViewSettingsItem text="Status Order" key="StatusOrder" />
 		</groupItems>
 		<filterItems>
-			<ViewSettingsFilterItem text="Order Status" key="1">
+			<ViewSettingsFilterItem text="Order Status" key="OrderStatus">
 				<items>
-					<ViewSettingsItem text="Too Long" key="1a" />
-					<ViewSettingsItem text="Urgent" key="1b" />
-					<ViewSettingsItem text="In time" key="1c" />
+					<ViewSettingsItem text="In time" key="Success" />
+					<ViewSettingsItem text="Urgent" key="Warning" />
+					<ViewSettingsItem text="Too Long" key="Error" />
 				</items>
 			</ViewSettingsFilterItem>
-			<ViewSettingsFilterItem text="Customer" items="{/viewDetails/allCustomers}" key="2">
+			<ViewSettingsFilterItem text="Customer" items="{/viewDetails/allCustomers}" key="Customer">
 				<items>
 					<ViewSettingsItem text="{CustomerName}" key="{CustomerID}" />
-				</items>
-			</ViewSettingsFilterItem>
-			<ViewSettingsFilterItem text="Field3" key="3">
-				<items>
-					<ViewSettingsItem text="Value A" key="3a" />
-					<ViewSettingsItem text="Value B" key="3b" />
-					<ViewSettingsItem text="Value C" key="3c" />
 				</items>
 			</ViewSettingsFilterItem>
 		</filterItems>

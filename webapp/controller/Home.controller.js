@@ -5,19 +5,28 @@ sap.ui.define([
     "sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
     'sap/ui/core/Fragment',
+    'sap/m/GroupHeaderListItem',
+    "sap/ui/model/Sorter",
     "com/lab2dev/browseordersprodev/model/formatter",
 ],
     /**
      * @param {typeof sap.ui.core.mvc.Controller} Controller
      */
-    function (Controller, models, JSONModel,Filter, FilterOperator, Fragment, formatter) {
+    function (Controller, models, JSONModel,Filter, FilterOperator, Fragment, GroupHeaderListItem, Sorter,formatter) {
         "use strict";
         
         return Controller.extend("com.lab2dev.browseordersprodev.controller.Home", {
             formatter: formatter,
             onInit: function () {
-                this.oRouter = this.getOwnerComponent().getRouter();
+                this.getView().setBusy(true)
+                
+                this._GroupPaths = {
+                    OrderMonth: "/OrderDate",
+                    ShippedDate: "/ShippedDate",
+                    StatusOrder: ''
+                }
 
+                this.oRouter = this.getOwnerComponent().getRouter();
                 const orders = models.getAllOrders();
 
                 orders
@@ -27,8 +36,10 @@ sap.ui.define([
                             count: this._countItems(aOrder),
                             viewDetails: {
                                 allCustomers: this._getAllCustomers(aOrder),
+                                descendingEnabled: false
                             }
                         }) 
+                        this.getView().setBusy(false)
                         this.getView().setModel(oModel)
                     })
                     .catch((sError) => {
@@ -52,7 +63,7 @@ sap.ui.define([
                     const filter = new Filter({
                         filters: [
                             new Filter("ShipName", FilterOperator.Contains, sQuery),
-                            new Filter("OrderID", FilterOperator.EQ, sQuery)
+                            new Filter("OrderID", (oValue) => oValue.toString().includes(sQuery))
                         ]
                     })
                     aFilters.push(filter)
@@ -77,6 +88,12 @@ sap.ui.define([
                     oDialog.open();
                 });
             },
+            _getGroupHeader: function (oGroup){
+                return new GroupHeaderListItem({
+                    title: oGroup.key,
+                    upperCase: false
+                });
+            },
             _countItems(aOrders){
                 return aOrders.length
             },
@@ -88,20 +105,35 @@ sap.ui.define([
             },
             handleConfirm: function(oEvent){
                 const oParams = oEvent.getParameters();
-                if(Object.keys(oParams.filterKeys).length >= 0){
-                    this._filterOrders(Object.keys(oParams.filterKeys))
-                }
+                this._filterOrders(oParams.filterCompoundKeys)
+                this._sortOrders(oParams.sortItem.getProperty("key"), oParams.sortDescending)
+                this._groupOrders(oParams.groupItem.getProperty("key"), oParams.groupDescending)
             },
             _filterOrders: function(sQuery){
                 const getModel = this.getView().getModel()
                 const oData = getModel.getData();          
                 const aFilters = []
 
-                if(sQuery && sQuery.length > 0){
-                    sQuery.forEach(query => {
-                        const filter = new Filter("CustomerID", FilterOperator.Contains, query)
-                        aFilters.push(filter)
-                    })
+                if(sQuery){
+                    if(sQuery.OrderStatus){
+                        Object.keys(sQuery.OrderStatus).forEach(query => {
+                            const filter = new Filter({
+                                test: (oValue) => {
+                                    const state = formatter.shipStatusState(oValue.OrderDate, oValue.ShippedDate)
+                                    return state === query
+                                }
+                            })
+                            aFilters.push(filter)
+                        })
+                    }
+
+                if(sQuery.Customer){
+                        Object.keys(sQuery.Customer).forEach(query => {
+                            const filter = new Filter("CustomerID", FilterOperator.Contains, query)
+                            aFilters.push(filter)
+                        })
+                    }
+                   
                 }
 
                 const oList = this.byId("OrdersTable")
@@ -109,6 +141,117 @@ sap.ui.define([
                 oBinding.filter(aFilters, "Application")
 
                 getModel.setData({...oData, count: oBinding.getCount()})
+            },
+            _sortOrders: function(sQuery, sortDescending){
+                let oSorter
+                if(sQuery === "StatusOrder"){
+                     oSorter = new Sorter({
+                        path: "",
+                        descending: sortDescending,
+                        group: false
+                    })
+
+                    oSorter.fnCompare = function(beforeValue, actualValue){
+                        const nDaysInTransportA = formatter.calcDaysInTransport(actualValue.OrderDate, actualValue.ShippedDate)
+                        const nDaysInTransportB = formatter.calcDaysInTransport(beforeValue.OrderDate, beforeValue.ShippedDate)
+                        
+                        if(nDaysInTransportA > nDaysInTransportB) return -1
+                        if(nDaysInTransportA == nDaysInTransportB) return 0
+                        if(nDaysInTransportA < nDaysInTransportB) return 1
+                    }
+                } else {
+                    oSorter = new Sorter({
+                        path: sQuery,
+                        descending: sortDescending,
+                        group: false
+                    })
+                }
+                
+                const oList = this.byId("OrdersTable")
+                const oBinding = oList.getBinding("items")
+                
+                oBinding.sort(oSorter, "Application")
+            },
+            _groupOrders: function(sQuery, groupDescending){
+                // Alerta de Gambiarra abaixo com o BIND
+                const oSorter = new Sorter("/OrderDate", groupDescending, this._oGroupFunctions["OrderMonth"])
+
+                const oList = this.byId("OrdersTable")
+                const oBinding = oList.getBinding("items")
+                
+                oBinding.sort(oSorter, "Application")
+              
+            },
+            _oGroupFunctions: {
+                CustomerGroup: function(oContext){
+                    const CustomerName = oContext.getProperty("ShipName")
+
+                    return {
+                        key: CustomerName,
+                        name: CustomerName
+                    }
+                },
+                OrderMonth: function(oContext){
+                    const orderDate = new Date(oContext.getProperty("OrderDate"))
+                    const nOrderMonth = orderDate.getMonth() + 1;
+                    const sOrderMonthName = new Date(orderDate).toLocaleDateString('pt-BR', {month: 'long'})
+                    const nOrderYear = orderDate.getFullYear()
+
+                    return {
+                        name: nOrderYear + '-' + nOrderMonth,
+                        key: `Ordered in ${sOrderMonthName}, ${nOrderYear}` 
+                    }
+                },
+                ShippedDate: function(oContext){
+                    const shippedDate = new Date(oContext.getProperty("ShippedDate"))
+
+                    if(shippedDate === null) {
+                        return {
+                            key: "null",
+                            value: "Not Shipped"
+                        }
+                    }
+
+                    const nShippedMonth = shippedDate.getMonth() + 1;
+                    const sShippedMonthName = new Date(shippedDate).toLocaleDateString('pt-BR', {month: 'long'})
+                    const nShippedYear = shippedDate.getFullYear()
+
+                    return {
+                        name: nShippedYear + '-' + nShippedMonth,
+                        key: `Shipped in ${sShippedMonthName}, ${nShippedYear}` 
+                    }
+                },
+                StatusOrder: function(oContext){
+                    const sOrderDate = oContext.getProperty("OrderDate")
+                    const sShippedDate = oContext.getProperty("ShippedDate")
+
+                    const nDaysInTransport = formatter.calcDaysInTransport(sOrderDate, sShippedDate)
+                    const key = this._oGroupFunctions._StatusOrderState(nDaysInTransport)
+
+                    console.log(key)
+
+                    return {
+                        key: key,
+                        name:  key
+                    }
+                    
+                },
+                // Por algum motivo qnd eu chamava o state no formatter quebrava, então coloquei a logica aqui... Perguntar pro João dps
+                _StatusOrderState: function(nDaysInTransport){
+                    if(nDaysInTransport > 14){
+                        return "Error"
+                    }
+                    if(nDaysInTransport > 7){
+                        return "Warning"
+                    }
+                    return "Success"
+                }
+            },
+            _getGroupHeader: function(oGroup) {
+                return new GroupHeaderListItem({
+                    title : oGroup.key
+                    }
+                );
             }
-        });
-    });
+    })
+});
