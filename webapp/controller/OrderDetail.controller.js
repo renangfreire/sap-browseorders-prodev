@@ -2,7 +2,7 @@ sap.ui.define([
     "sap/ui/core/mvc/Controller",
     "com/lab2dev/browseordersprodev/model/models",
     "sap/ui/model/json/JSONModel",
-    "sap/m/MessagBox",
+    "sap/m/MessageBox",
     "com/lab2dev/browseordersprodev/model/formatter"
 ],
     /**
