@@ -7,12 +7,13 @@ sap.ui.define([
     'sap/ui/core/Fragment',
     'sap/m/GroupHeaderListItem',
     "sap/ui/model/Sorter",
+    "sap/m/MessageBox",
     "com/lab2dev/browseordersprodev/model/formatter",
 ],
     /**
      * @param {typeof sap.ui.core.mvc.Controller} Controller
      */
-    function (Controller, models, JSONModel,Filter, FilterOperator, Fragment, GroupHeaderListItem, Sorter,formatter) {
+    function (Controller, models, JSONModel,Filter, FilterOperator, Fragment, GroupHeaderListItem, Sorter, MessageBox,formatter) {
         "use strict";
         
         return Controller.extend("com.lab2dev.browseordersprodev.controller.Home", {
@@ -43,7 +44,7 @@ sap.ui.define([
                         this.getView().setModel(oModel)
                     })
                     .catch((sError) => {
-                        console.log("Error getOrder" + sError)
+                        MessageBox.warning("Error getOrder" + sError)
                     })
             },
             onNavToOrderDetails: function(oEvent){
@@ -185,7 +186,6 @@ sap.ui.define([
             _oGroupFunctions: {
                 CustomerGroup: function(oContext){
                     const CustomerName = oContext.getProperty("ShipName")
-                    debugger
 
                     return {
                         key: CustomerName,

@@ -37,12 +37,15 @@ sap.ui.define([
                     return "In time"
                 
             },
-            shipStatusState: function(oOrderDate, oShippedDate, nDaysInTransport){
+            shipStatusState: function(oOrderDate, oShippedDate){
                 if(oShippedDate === "null"){
                     return "None"
                 }
                 
-                nDaysInTransport = this.formatter.calcDaysInTransport(oOrderDate, oShippedDate);
+                oShippedDate = new Date(oShippedDate)
+                oOrderDate = new Date(oOrderDate)
+
+                const nDaysInTransport = new Date(oShippedDate.getTime() - oOrderDate.getTime()).getDate()
                 
 
                 if(nDaysInTransport > 14){

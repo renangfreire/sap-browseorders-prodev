@@ -2,12 +2,13 @@ sap.ui.define([
     "sap/ui/core/mvc/Controller",
     "com/lab2dev/browseordersprodev/model/models",
     "sap/ui/model/json/JSONModel",
+    "sap/m/MessagBox",
     "com/lab2dev/browseordersprodev/model/formatter"
 ],
     /**
      * @param {typeof sap.ui.core.mvc.Controller} Controller
      */
-    function (Controller, models, JSONModel, formatter) {
+    function (Controller, models, JSONModel, MessageBox ,formatter) {
         "use strict";
         
         return Controller.extend("com.lab2dev.browseordersprodev.controller.OrderDetail", {
@@ -73,7 +74,7 @@ sap.ui.define([
 
                     })
                     .catch((sError) => {
-                        console.log("Error getOrder" + sError)
+                        MessageBox.warning("Error getOrder" + sError)
                     })
 
             },
